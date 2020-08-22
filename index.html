@@ -30,19 +30,104 @@
     </header>
     <div class="container">
       <!-- Timeblocks go here -->
+       <!--
         <div class="row">
-          <div class="col-sm-1 hour time-block"></div>
-          <textarea type="text" class="col-sm-10 user-input description"></textarea> 
-          <button class="col-sm-1 save-btn">Save</button>
+            <div class="col-sm-1 hour time-block" value="9">9 AM</div>
+            <textarea type="text" class="col-sm-10 user-input description"></textarea>
+            <button class="col-sm-1 save-btn">Save</button>
         </div>
+
+        <div class="row">
+            <div class="col-sm-1 hour time-block" value="10">10 AM</div>
+            <textarea type="text" class="col-sm-10 user-input description"></textarea>
+            <button class="col-sm-1 save-btn">Save</button>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-1 hour time-block" value="11">11 AM</div>
+            <textarea type="text" class="col-sm-10 user-input description"></textarea>
+            <button class="col-sm-1 save-btn">Save</button>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-1 hour time-block" value="12">12 PM</div>
+            <textarea type="text" class="col-sm-10 user-input description"></textarea>
+            <button class="col-sm-1 save-btn">Save</button>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-1 hour time-block" value="1">1 PM</div>
+            <textarea type="text" class="col-sm-10 user-input description"></textarea>
+            <button class="col-sm-1 save-btn">Save</button>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-1 hour time-block" value="2">2 PM</div>
+            <textarea type="text" class="col-sm-10 user-input description"></textarea>
+            <button class="col-sm-1 save-btn">Save</button>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-1 hour time-block" value="3">3 PM</div>
+            <textarea type="text" class="col-sm-10 user-input description"></textarea>
+            <button class="col-sm-1 save-btn">Save</button>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-1 hour time-block" value="4">4 PM</div>
+            <textarea type="text" class="col-sm-10 user-input description"></textarea>
+            <button class="col-sm-1 save-btn">Save</button>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-1 hour time-block" value="5">5 PM</div>
+            <textarea type="text" class="col-sm-10 user-input description"></textarea>
+            <button class="col-sm-1 save-btn">Save</button>
+        </div>
+    -->
+
+        
     </div>
 
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
     <script type="text/javascript">
     $(document).ready(function() {
-        var hourBlock = "";
+        $("#currentDay").text(moment().format('dddd') + ", " + moment().format("MMMM Do"));
+
         var workdayHours = ["9 AM", "10 AM", "11 AM", "12 PM", "1 PM", "2 PM", "3 PM", "4 PM", "5 PM"];
+
+        for (var i = 0; i < workdayHours.length; i++) {
+            var rowEl = $(`<div class="row">`);
+            var textareaEl =$(`<textarea type="text" class="col-sm-10 user-input description">`);
+            var saveEl = $(`<button class="col-sm-1 save-btn">`);
+
+            var hour = workdayHours[i];
+            var hourEl = $(`<div class="col-sm-1 hour time-block">`);
+            hourEl.attr("data-name", workdayHours[i]);
+
+            for (var j = 0; j < workdayHours.length; j++) {
+                rowEl.append(textareaEl, saveEl);
+                rowEl.prepend(hourEl.text(hour));
+                
+            }
+            $(".container").append(rowEl);          
+        }
+
+        // if else statements for colorcoding past, present, future - will .addClass("past/present/future")
+        var currentHour = "";
+
+        function isHour(currentHour) {
+            return Math.floor(currentHour) === currentHour; // start like this??
+        }
+
+        // all .save-btn or just first? need id's for each?
+        $(".save-btn").on("click", function(event) {
+            event.preventDefault();
+            var hourBlock = $(".row");
+            var description = $(".description").val().trim(); // grab input from textarea
+        })
+
     })
     
     </script>
