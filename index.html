@@ -30,7 +30,7 @@
     </header>
     <div class="container">
       <!-- Timeblocks go here -->
-       <!--
+      <!--
         <div class="row">
             <div class="col-sm-1 hour time-block" value="9">9 AM</div>
             <textarea type="text" class="col-sm-10 user-input description"></textarea>
@@ -84,70 +84,105 @@
             <textarea type="text" class="col-sm-10 user-input description"></textarea>
             <button class="col-sm-1 save-btn">Save</button>
         </div>
-    -->
-
-        
-    </div>
+    --></div>
 
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
     <script type="text/javascript">
-    $(document).ready(function() {
-      var date = new Date();
-      var currentHour = date.getHours(); // gives currentHour as an whole number integer in military time
+      $(document).ready(function () {
+        var date = new Date();
+        var currentHour = date.getHours(); // gives currentHour as an whole number integer in military time
 
-      $("#currentDay").text(moment().format('dddd') + ", " + moment().format("MMMM Do"));
-      
-      
-
-        var workdayHours = ["9 AM", "10 AM", "11 AM", "12 PM", "1 PM", "2 PM", "3 PM", "4 PM", "5 PM"];
+        var workdayHours = [
+          "9 AM",
+          "10 AM",
+          "11 AM",
+          "12 PM",
+          "1 PM",
+          "2 PM",
+          "3 PM",
+          "4 PM",
+          "5 PM",
+        ];
         var militaryHours = [9, 10, 11, 12, 13, 14, 15, 16, 17];
+        var descriptions = [];
 
-        for (var i = 0; i < workdayHours.length; i++) {
+        $("#currentDay").text(
+          moment().format("dddd") + ", " + moment().format("MMMM Do")
+        );
+
+        init();
+
+        function renderSchedule() {
+          for (var i = 0; i < workdayHours.length; i++) {
             var rowEl = $(`<div class="row">`);
-            var textareaEl =$(`<textarea type="text" class="col-sm-10 user-input description">`);
-            var saveEl = $(`<button class="col-sm-1 save-btn">`);
+            var textareaEl = $(`<textarea type="text" class="col-sm-10 user-input description">`);
+            var saveEl = $(`<button class="col-sm-1 save-btn"><i class="far fa-save"></i></button>`); // Have to add save button icon; go to Sat class for example (FontAwesome)
 
             var hour = workdayHours[i];
             var hourEl = $(`<div class="col-sm-1 hour time-block">`);
             hourEl.attr("data-name", militaryHours[i]);
 
             for (var j = 0; j < workdayHours.length; j++) {
-                rowEl.append(textareaEl, saveEl);
-                rowEl.prepend(hourEl.text(hour));
+              rowEl.append(textareaEl, saveEl);
+              rowEl.prepend(hourEl.text(hour));
             }
-            $(".container").append(rowEl);    
+            $(".container").append(rowEl);
             console.log(hourEl.attr("data-name"));
             console.log(currentHour);
-        
-          if ((hourEl.attr("data-name") == currentHour)) { // How to make it so that can use "===" (identity), instead of "=="? Is currentHour an integer? Is militaryHours[i]?
-            textareaEl.addClass("present");
-            } else if ((hourEl.attr("data-name") < currentHour)) {
+
+            if (hourEl.attr("data-name") == currentHour) {
+              // How to make it so that can use "===" (identity), instead of "=="? Is currentHour an integer? Is militaryHours[i]?
+              textareaEl.addClass("present");
+            } else if (hourEl.attr("data-name") < currentHour) {
               textareaEl.addClass("past");
-            } else if ((hourEl.attr("data-name") > currentHour)) {
+            } else if (hourEl.attr("data-name") > currentHour) {
               textareaEl.addClass("future");
             }
+
+          }
         }
 
-        // if else statements for colorcoding past, present, future - will .addClass("past/present/future")
-        
+        // the base way of localStorage; perhaps need a (this) from description to target the description and store it properly??
+        function init() {
+          // Get stored hourlyInputs from localStorage
+          // Parsing the JSON string to an object
+          var storedDescriptions = JSON.parse(
+            localStorage.getItem("descriptions")
+          );
+
+          // If descriptions were retrienved from localStorage, update the descriptions array to it
+          if (storedDescriptions !== null) {
+            descriptions = storedDescriptions;
+          }
+
+          // Do I need to create a function for the creation/rendering of the hourBlocks??
+          renderSchedule();
+        }
+
+        function storeDescriptions() {
+          // Stringify and set "descriptions" key in localStorage to descriptions array
+          localStorage.setItem("descriptions", JSON.stringify(descriptions));
+        }
+
+        $(".save-btn").on("click", function (event) {
+          event.preventDefault();
+          var hourBlock = $(".row");
+          var hourlyDescription = $(".description").val().trim(); // grab input from textarea
+
+          // Return from function early if submitted description is blank
+          if (hourlyDescription === "") {
+            return;
+          }
+
+          descriptions.push(hourlyDescriptions);
+
+          storeDescriptions();
+          renderSchedule();
+        });
 
         
-        /*function isHour(currentHour) {
-            return Math.floor(currentHour) === currentHour; // start like this??
-        } */
-
-
-
-        // all .save-btn or just first? need id's for each?
-        $(".save-btn").on("click", function(event) {
-            event.preventDefault();
-            var hourBlock = $(".row");
-            var description = $(".description").val().trim(); // grab input from textarea
-        })
-
-    })
-    
+      });
     </script>
   </body>
 </html>
