@@ -93,9 +93,15 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
     <script type="text/javascript">
     $(document).ready(function() {
-        $("#currentDay").text(moment().format('dddd') + ", " + moment().format("MMMM Do"));
+      var date = new Date();
+      var currentHour = date.getHours(); // gives currentHour as an whole number integer in military time
+
+      $("#currentDay").text(moment().format('dddd') + ", " + moment().format("MMMM Do"));
+      
+      
 
         var workdayHours = ["9 AM", "10 AM", "11 AM", "12 PM", "1 PM", "2 PM", "3 PM", "4 PM", "5 PM"];
+        var militaryHours = [9, 10, 11, 12, 13, 14, 15, 16, 17];
 
         for (var i = 0; i < workdayHours.length; i++) {
             var rowEl = $(`<div class="row">`);
@@ -104,22 +110,34 @@
 
             var hour = workdayHours[i];
             var hourEl = $(`<div class="col-sm-1 hour time-block">`);
-            hourEl.attr("data-name", workdayHours[i]);
+            hourEl.attr("data-name", militaryHours[i]);
 
             for (var j = 0; j < workdayHours.length; j++) {
                 rowEl.append(textareaEl, saveEl);
                 rowEl.prepend(hourEl.text(hour));
-                
             }
-            $(".container").append(rowEl);          
+            $(".container").append(rowEl);    
+            console.log(hourEl.attr("data-name"));
+            console.log(currentHour);
+        
+          if ((hourEl.attr("data-name") == currentHour)) { // How to make it so that can use "===" (identity), instead of "=="? Is currentHour an integer? Is militaryHours[i]?
+            textareaEl.addClass("present");
+            } else if ((hourEl.attr("data-name") < currentHour)) {
+              textareaEl.addClass("past");
+            } else if ((hourEl.attr("data-name") > currentHour)) {
+              textareaEl.addClass("future");
+            }
         }
 
         // if else statements for colorcoding past, present, future - will .addClass("past/present/future")
-        var currentHour = "";
+        
 
-        function isHour(currentHour) {
+        
+        /*function isHour(currentHour) {
             return Math.floor(currentHour) === currentHour; // start like this??
-        }
+        } */
+
+
 
         // all .save-btn or just first? need id's for each?
         $(".save-btn").on("click", function(event) {
