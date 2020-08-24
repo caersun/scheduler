@@ -28,63 +28,10 @@
       <p class="lead">A simple calendar app for scheduling your work day</p>
       <p id="currentDay" class="lead"></p>
     </header>
+
     <div class="container">
       <!-- Timeblocks go here -->
-      <!--
-        <div class="row">
-            <div class="col-sm-1 hour time-block" value="9">9 AM</div>
-            <textarea type="text" class="col-sm-10 user-input description"></textarea>
-            <button class="col-sm-1 save-btn">Save</button>
-        </div>
-
-        <div class="row">
-            <div class="col-sm-1 hour time-block" value="10">10 AM</div>
-            <textarea type="text" class="col-sm-10 user-input description"></textarea>
-            <button class="col-sm-1 save-btn">Save</button>
-        </div>
-
-        <div class="row">
-            <div class="col-sm-1 hour time-block" value="11">11 AM</div>
-            <textarea type="text" class="col-sm-10 user-input description"></textarea>
-            <button class="col-sm-1 save-btn">Save</button>
-        </div>
-
-        <div class="row">
-            <div class="col-sm-1 hour time-block" value="12">12 PM</div>
-            <textarea type="text" class="col-sm-10 user-input description"></textarea>
-            <button class="col-sm-1 save-btn">Save</button>
-        </div>
-
-        <div class="row">
-            <div class="col-sm-1 hour time-block" value="1">1 PM</div>
-            <textarea type="text" class="col-sm-10 user-input description"></textarea>
-            <button class="col-sm-1 save-btn">Save</button>
-        </div>
-
-        <div class="row">
-            <div class="col-sm-1 hour time-block" value="2">2 PM</div>
-            <textarea type="text" class="col-sm-10 user-input description"></textarea>
-            <button class="col-sm-1 save-btn">Save</button>
-        </div>
-
-        <div class="row">
-            <div class="col-sm-1 hour time-block" value="3">3 PM</div>
-            <textarea type="text" class="col-sm-10 user-input description"></textarea>
-            <button class="col-sm-1 save-btn">Save</button>
-        </div>
-
-        <div class="row">
-            <div class="col-sm-1 hour time-block" value="4">4 PM</div>
-            <textarea type="text" class="col-sm-10 user-input description"></textarea>
-            <button class="col-sm-1 save-btn">Save</button>
-        </div>
-
-        <div class="row">
-            <div class="col-sm-1 hour time-block" value="5">5 PM</div>
-            <textarea type="text" class="col-sm-10 user-input description"></textarea>
-            <button class="col-sm-1 save-btn">Save</button>
-        </div>
-    --></div>
+    </div>
 
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
@@ -114,29 +61,38 @@
         init();
 
         function renderSchedule() {
+          // Clear container after every save, so it can re-render list with saved input
+          $(".container").empty();
+
+          // Create schedule blocks
           for (var i = 0; i < workdayHours.length; i++) {
             var rowEl = $(`<div class="row">`);
-            var textareaEl = $(`<textarea type="text" class="col-sm-10 user-input description">`);
-            var saveEl = $(`<button class="col-sm-1 save-btn"><i class="far fa-save"></i></button>`); // Have to add save button icon; go to Sat class for example (FontAwesome)
-
-            var hour = workdayHours[i];
             var hourEl = $(`<div class="col-sm-1 hour time-block">`);
-            hourEl.attr("data-name", militaryHours[i]);
+            var textareaEl = $(`<textarea type="text" class="col-sm-10 user-input description">`);
+            var saveEl = $(`<button class="col-sm-1 save-btn"><i class="far fa-save"></i></button>`); 
+            
+            var hour = workdayHours[i];
+            var militaryHour = militaryHours[i];
+            
+
+            textareaEl.attr("data-name", militaryHours[i]);
 
             for (var j = 0; j < workdayHours.length; j++) {
-              rowEl.append(textareaEl, saveEl);
+              rowEl.append(saveEl);
+              rowEl.prepend(textareaEl.attr("data-name", militaryHour))
               rowEl.prepend(hourEl.text(hour));
             }
+
             $(".container").append(rowEl);
-            console.log(hourEl.attr("data-name"));
+            console.log(textareaEl.attr("data-name"));
             console.log(currentHour);
 
-            if (hourEl.attr("data-name") == currentHour) {
+            if (textareaEl.attr("data-name") == currentHour) {
               // How to make it so that can use "===" (identity), instead of "=="? Is currentHour an integer? Is militaryHours[i]?
               textareaEl.addClass("present");
-            } else if (hourEl.attr("data-name") < currentHour) {
+            } else if (textareaEl.attr("data-name") < currentHour) {
               textareaEl.addClass("past");
-            } else if (hourEl.attr("data-name") > currentHour) {
+            } else if (textareaEl.attr("data-name") > currentHour) {
               textareaEl.addClass("future");
             }
 
@@ -147,38 +103,59 @@
         function init() {
           // Get stored hourlyInputs from localStorage
           // Parsing the JSON string to an object
-          var storedDescriptions = JSON.parse(
-            localStorage.getItem("descriptions")
-          );
+          var storedDescriptions = JSON.parse(localStorage.getItem("descriptions"));
 
-          // If descriptions were retrienved from localStorage, update the descriptions array to it
+          // If descriptions were retrieved from localStorage, update the descriptions array to it
           if (storedDescriptions !== null) {
             descriptions = storedDescriptions;
+          } else if (storedDescriptions == null) {
+            descriptions = [];
           }
 
-          // Do I need to create a function for the creation/rendering of the hourBlocks??
+          // Trying to get the correct description to store and show!!!!!
+          for (var i = 0; i < storedDescriptions.length; i++) {
+            
+            console.log(storedDescriptions);
+
+            var hourlyBlock = storedDescriptions[i];
+            var timeFromStorage = hourlyBlock.time;
+            var descriptionFromStorage = hourlyBlock.description;
+
+            $("[data-name=" + timeFromStorage + "]").val(descriptionFromStorage);
+          } 
+
           renderSchedule();
         }
 
-        function storeDescriptions() {
-          // Stringify and set "descriptions" key in localStorage to descriptions array
-          localStorage.setItem("descriptions", JSON.stringify(descriptions));
-        }
 
         $(".save-btn").on("click", function (event) {
           event.preventDefault();
-          var hourBlock = $(".row");
-          var hourlyDescription = $(".description").val().trim(); // grab input from textarea
+
+
+          var hourlyTime = $(this).parent().children(".description").attr("data-name");
+          var hourlyDescription = $(this).parent().children(".description").val().trim(); // grab input from textarea
+          console.log("In the " + hourlyTime + " time-block, we wrote: " + hourlyDescription);
 
           // Return from function early if submitted description is blank
           if (hourlyDescription === "") {
             return;
           }
+          var hourlyDetails = {
+            time: hourlyTime,
+            description: hourlyDescription,
+          };
+          console.log(hourlyDetails);
 
-          descriptions.push(hourlyDescriptions);
+          
 
-          storeDescriptions();
-          renderSchedule();
+          // Pushing hourlyDetails to descriptions array
+          descriptions.push(hourlyDetails);
+          console.log(descriptions);
+
+          // Stringify and set "descriptions" key in localStorage to descriptions array
+          localStorage.setItem("descriptions", JSON.stringify(descriptions));
+
+          init(); 
         });
 
         
