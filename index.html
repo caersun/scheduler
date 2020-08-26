@@ -58,7 +58,7 @@
           moment().format("dddd") + ", " + moment().format("MMMM Do")
         );
 
-        init();
+        loadStored();
 
         function renderSchedule() {
           // Clear container after every save, so it can re-render list with saved input
@@ -79,7 +79,7 @@
 
             for (var j = 0; j < workdayHours.length; j++) {
               rowEl.append(saveEl);
-              rowEl.prepend(textareaEl.attr("data-name", militaryHour))
+              rowEl.prepend(textareaEl);
               rowEl.prepend(hourEl.text(hour));
             }
 
@@ -100,31 +100,36 @@
         }
 
         // the base way of localStorage; perhaps need a (this) from description to target the description and store it properly??
-        function init() {
+        function loadStored() {
           // Get stored hourlyInputs from localStorage
           // Parsing the JSON string to an object
+          
+          renderSchedule();
           var storedDescriptions = JSON.parse(localStorage.getItem("descriptions"));
 
           // If descriptions were retrieved from localStorage, update the descriptions array to it
           if (storedDescriptions !== null) {
             descriptions = storedDescriptions;
-          } else if (storedDescriptions == null) {
-            descriptions = [];
-          }
 
-          // Trying to get the correct description to store and show!!!!!
-          for (var i = 0; i < storedDescriptions.length; i++) {
+            for (var i = 0; i < storedDescriptions.length; i++) {
             
-            console.log(storedDescriptions);
+            console.log(storedDescriptions[i]);
 
             var hourlyBlock = storedDescriptions[i];
             var timeFromStorage = hourlyBlock.time;
             var descriptionFromStorage = hourlyBlock.description;
 
-            $("[data-name=" + timeFromStorage + "]").val(descriptionFromStorage);
+            var currentInput = $('textarea[data-name="' + timeFromStorage + '"]');
+            // console.log(currentInput);
+            currentInput.val(descriptionFromStorage);
           } 
+          } /* else if (storedDescriptions == null) {
+            descriptions = [];
+          } */ // Necessary?
 
-          renderSchedule();
+          // Trying to get the correct description to store and show!!!!!
+          
+
         }
 
 
@@ -144,18 +149,16 @@
             time: hourlyTime,
             description: hourlyDescription,
           };
-          console.log(hourlyDetails);
-
-          
+          // console.log(hourlyDetails);
 
           // Pushing hourlyDetails to descriptions array
           descriptions.push(hourlyDetails);
-          console.log(descriptions);
+          // console.log(descriptions);
 
-          // Stringify and set "descriptions" key in localStorage to descriptions array
+          // Stringify and store "descriptions" key in localStorage to descriptions array
           localStorage.setItem("descriptions", JSON.stringify(descriptions));
 
-          init(); 
+          loadStored();
         });
 
         
