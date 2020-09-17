@@ -2,7 +2,7 @@
 "Scheduler" is a simple sheduling and task-management application. "Scheduler" tracks the workday by hour, 9AM to 5PM, and allows the user to input and locally store events at any hour. The app also dynamically tracks time, rendering daily and identifying the hours as past, present, or future with different colors.
 
 ## Deployed Application
-Access "Scheduler" here: https://caersun.github.io/scheduler/
+Access "Scheduler" [HERE](https://caersun.github.io/scheduler/)
 
 ## Technologies Used
 - HTML5
@@ -18,6 +18,6 @@ Access "Scheduler" here: https://caersun.github.io/scheduler/
 MIT
 
 ## Contact Me
-[Email](i.cynthiagarcia@gmail.com)
+[Email](i.cynthiagarcia@gmail.com) <br>
 [Portfolio](https://caersun.github.io/portfolio/)
 
